@@ -100,15 +100,35 @@ class PageFlipWidgetState extends State<PageFlipWidget>
       lastPageLoad = pages.length < 3 ? 0 : 3;
     }
     if (widget.initialIndex != 0) {
-      currentPage = ValueNotifier(widget.initialIndex);
-      currentWidget = ValueNotifier(pages[pageNumber]);
-      currentPageIndex = ValueNotifier(widget.initialIndex);
+      // Ensure proper initialization for non-zero initial index
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        currentPage.value = widget.initialIndex;
+        currentWidget.value = pages[pageNumber];
+        currentPageIndex.value = widget.initialIndex;
+        // Pre-capture images for better quality
+        _preloadImages();
+      });
     }
   }
 
   bool get _isLastPage => (pages.length - 1) == pageNumber;
   int lastPageLoad = 0;
   bool get _isFirstPage => pageNumber == 0;
+
+  void _preloadImages() {
+    // Preload current page and adjacent pages for better quality
+    final pagesToPreload = [
+      pageNumber,
+      if (pageNumber > 0) pageNumber - 1,
+      if (pageNumber < pages.length - 1) pageNumber + 1,
+    ];
+
+    for (final pageIndex in pagesToPreload) {
+      if (pageIndex >= 0 && pageIndex < pages.length) {
+        currentPageIndex.value = pageIndex;
+      }
+    }
+  }
 
   void _turnPage(DragUpdateDetails details, BoxConstraints dimens) {
     // During dragging, update currentPage to trigger the builder's animation effect
@@ -237,6 +257,9 @@ class PageFlipWidgetState extends State<PageFlipWidget>
     currentPageIndex.value = pageNumber;
     currentWidget.value = pages[pageNumber];
     currentPage.value = pageNumber;
+
+    // Preload adjacent pages
+    _preloadImages();
   }
 
   @override
