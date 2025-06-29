@@ -228,7 +228,7 @@ class PageFlipWidgetState extends State<PageFlipWidget>
 
   /// Triggers the animation to go back to the previous page – via gesture or button.
   Future previousPage() async {
-    if (pageNumber <= 1) return;
+    if (pageNumber < 1) return;
     // Prevent going before the first page
     if (_isFirstPage) return;
     widget.onFlipStart?.call();
