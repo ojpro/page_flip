@@ -99,16 +99,16 @@ class PageFlipWidgetState extends State<PageFlipWidget>
       pageNumber = widget.initialIndex;
       lastPageLoad = pages.length < 3 ? 0 : 3;
     }
-    if (widget.initialIndex != 0) {
-      // Ensure proper initialization for non-zero initial index
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        currentPage.value = widget.initialIndex;
+    // Ensure proper initialization for any initial index
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        currentPageIndex.value = pageNumber;
         currentWidget.value = pages[pageNumber];
-        currentPageIndex.value = widget.initialIndex;
         // Pre-capture images for better quality
         _preloadImages();
-      });
-    }
+      }
+    });
+
   }
 
   bool get _isLastPage => (pages.length - 1) == pageNumber;
@@ -116,7 +116,6 @@ class PageFlipWidgetState extends State<PageFlipWidget>
   bool get _isFirstPage => pageNumber == 0;
 
   void _preloadImages() {
-    // Preload current page and adjacent pages for better quality
     final pagesToPreload = [
       pageNumber,
       if (pageNumber > 0) pageNumber - 1,
@@ -125,7 +124,17 @@ class PageFlipWidgetState extends State<PageFlipWidget>
 
     for (final pageIndex in pagesToPreload) {
       if (pageIndex >= 0 && pageIndex < pages.length) {
-        currentPageIndex.value = pageIndex;
+        // Just trigger a brief capture for preloading
+        Future.delayed(Duration(milliseconds: pageIndex == pageNumber ? 0 : 100), () {
+          if (mounted) {
+            currentPage.value = pageIndex;
+            Future.delayed(const Duration(milliseconds: 50), () {
+              if (mounted) {
+                currentPage.value = -1;
+              }
+            });
+          }
+        });
       }
     }
   }
@@ -259,7 +268,6 @@ class PageFlipWidgetState extends State<PageFlipWidget>
     }
     currentPageIndex.value = pageNumber;
     currentWidget.value = pages[pageNumber];
-    currentPage.value = pageNumber;
 
     // Preload adjacent pages
     _preloadImages();
