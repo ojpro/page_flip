@@ -10,8 +10,7 @@ void main() {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.indigo,
-        colorScheme:
-            ColorScheme.fromSwatch().copyWith(secondary: Colors.pinkAccent),
+        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.pinkAccent),
       ),
       home: const ExampleScreen(),
     ),
@@ -25,8 +24,7 @@ class ExampleScreen extends StatefulWidget {
   State<ExampleScreen> createState() => _ExampleScreenState();
 }
 
-class _ExampleScreenState extends State<ExampleScreen>
-    with SingleTickerProviderStateMixin {
+class _ExampleScreenState extends State<ExampleScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -46,8 +44,7 @@ class _ExampleScreenState extends State<ExampleScreen>
   }
 
   void _onTap() {
-    if (_controller.status == AnimationStatus.dismissed ||
-        _controller.status == AnimationStatus.reverse) {
+    if (_controller.status == AnimationStatus.dismissed || _controller.status == AnimationStatus.reverse) {
       _controller.forward();
     } else {
       _controller.reverse();
@@ -130,8 +127,7 @@ class AlicePage1 extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   const Expanded(
-                    child: Text(
-                        'Alice was beginning to get very tired of sitting by her sister on the bank, and of'
+                    child: Text('Alice was beginning to get very tired of sitting by her sister on the bank, and of'
                         ' having nothing to do: once or twice she had peeped into the book her sister was '
                         'reading, but it had no pictures or conversations in it, `and what is the use of '
                         "a book,' thought Alice `without pictures or conversation?'"),
@@ -202,8 +198,7 @@ class _PageTurnWidgetState extends State<PageTurnWidget> {
 
   void _captureImage(Duration timeStamp) async {
     final pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    final boundary = _boundaryKey.currentContext?.findRenderObject()
-        as RenderRepaintBoundary;
+    final boundary = _boundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
     final image = await boundary.toImage(pixelRatio: pixelRatio);
     setState(() => _image = image);
   }
@@ -213,10 +208,11 @@ class _PageTurnWidgetState extends State<PageTurnWidget> {
     if (_image != null) {
       return CustomPaint(
         painter: _PageTurnEffect(
-            amount: widget.amount,
-            image: _image!,
-            backgroundColor: widget.backgroundColor,
-            radius: 0.18),
+          amount: widget.amount,
+          image: _image!,
+          backgroundColor: widget.backgroundColor,
+          radius: 0.18,
+        ),
         size: Size.infinite,
       );
     } else {
@@ -306,8 +302,7 @@ class _PageTurnImageState extends State<PageTurnImage> {
   }
 
   void _resolveImage() {
-    final ImageStream newStream =
-        widget.image.resolve(createLocalImageConfiguration(context));
+    final ImageStream newStream = widget.image.resolve(createLocalImageConfiguration(context));
     _updateSourceStream(newStream);
   }
 
@@ -344,10 +339,11 @@ class _PageTurnImageState extends State<PageTurnImage> {
     if (_imageInfo != null) {
       return CustomPaint(
         painter: _PageTurnEffect(
-            amount: widget.amount,
-            image: _imageInfo!.image,
-            backgroundColor: widget.backgroundColor,
-            radius: 0.18),
+          amount: widget.amount,
+          image: _imageInfo!.image,
+          backgroundColor: widget.backgroundColor,
+          radius: 0.18,
+        ),
         size: Size.infinite,
       );
     } else {
@@ -361,12 +357,14 @@ class _PageTurnEffect extends CustomPainter {
     required this.amount,
     required this.image,
     required this.backgroundColor,
+    this.shadowColor = Colors.black54,
     this.radius = 0.18,
   }) : super(repaint: amount);
 
   final Animation<double> amount;
   final ui.Image image;
   final Color backgroundColor;
+  final Color shadowColor;
   final double radius;
 
   @override
@@ -382,22 +380,20 @@ class _PageTurnEffect extends CustomPainter {
     final h = size.height.toDouble();
     final c = canvas;
     final shadowXf = (wHRatio - movX);
-    final shadowSigma =
-        Shadow.convertRadiusToSigma(8.0 + (32.0 * (1.0 - shadowXf)));
+    final shadowSigma = Shadow.convertRadiusToSigma(8.0 + (32.0 * (1.0 - shadowXf)));
     final pageRect = Rect.fromLTRB(0.0, 0.0, w * shadowXf, h);
     c.drawRect(pageRect, Paint()..color = backgroundColor);
     c.drawRect(
       pageRect,
       Paint()
-        ..color = Colors.black54
+        ..color = shadowColor
         ..maskFilter = MaskFilter.blur(BlurStyle.outer, shadowSigma),
     );
 
     final ip = Paint();
     for (double x = 0; x < size.width; x++) {
       final xf = (x / w);
-      final v = (calcR * (math.sin(math.pi / 0.5 * (xf - (1.0 - pos)))) +
-          (calcR * 1.1));
+      final v = (calcR * (math.sin(math.pi / 0.5 * (xf - (1.0 - pos)))) + (calcR * 1.1));
       final xv = (xf * wHRatio) - movX;
       final sx = (xf * image.width);
       final sr = Rect.fromLTRB(sx, 0.0, sx + 1.0, image.height.toDouble());
@@ -410,7 +406,6 @@ class _PageTurnEffect extends CustomPainter {
 
   @override
   bool shouldRepaint(_PageTurnEffect oldDelegate) {
-    return oldDelegate.image != image ||
-        oldDelegate.amount.value != amount.value;
+    return oldDelegate.image != image || oldDelegate.amount.value != amount.value;
   }
 }

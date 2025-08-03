@@ -15,6 +15,7 @@ class PageFlipBuilder extends StatefulWidget {
     Key? key,
     required this.amount,
     this.backgroundColor,
+    this.shadowColor = Colors.black54,
     required this.child,
     required this.pageIndex,
     required this.isRightSwipe,
@@ -23,6 +24,7 @@ class PageFlipBuilder extends StatefulWidget {
   final Animation<double> amount;
   final int pageIndex;
   final Color? backgroundColor;
+  final Color shadowColor;
   final Widget child;
   final bool isRightSwipe;
 
@@ -37,8 +39,7 @@ class PageFlipBuilderState extends State<PageFlipBuilder> {
     if (_boundaryKey.currentContext == null) return;
     await Future.delayed(const Duration(milliseconds: 100));
     if (mounted) {
-      final boundary = _boundaryKey.currentContext!.findRenderObject()!
-          as RenderRepaintBoundary;
+      final boundary = _boundaryKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
       final image = await boundary.toImage();
       setState(() {
         imageData[index] = image.clone();
@@ -57,6 +58,7 @@ class PageFlipBuilderState extends State<PageFlipBuilder> {
               amount: widget.amount,
               image: imageData[widget.pageIndex]!,
               backgroundColor: widget.backgroundColor,
+              shadowColor: widget.shadowColor,
               isRightSwipe: widget.isRightSwipe,
             ),
             size: Size.infinite,
@@ -67,8 +69,7 @@ class PageFlipBuilderState extends State<PageFlipBuilder> {
               (timeStamp) => _captureImage(timeStamp, currentPageIndex.value),
             );
           }
-          if (widget.pageIndex == currentPageIndex.value ||
-              (widget.pageIndex == (currentPageIndex.value + 1))) {
+          if (widget.pageIndex == currentPageIndex.value || (widget.pageIndex == (currentPageIndex.value + 1))) {
             return ColoredBox(
               color: widget.backgroundColor ?? Colors.black12,
               child: RepaintBoundary(

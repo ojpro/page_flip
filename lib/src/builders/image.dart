@@ -8,12 +8,14 @@ class PageFlipImage extends StatefulWidget {
     this.image,
     this.backgroundColor = const Color(0xFFFFFFCC),
     this.isRightSwipe = false,
+    this.shadowColor = Colors.black54,
   }) : super(key: key);
 
   final Animation<double> amount;
   final ImageProvider? image;
   final Color? backgroundColor;
   final bool isRightSwipe;
+  final Color shadowColor;
 
   @override
   State<PageFlipImage> createState() => _PageFlipImageState();
@@ -64,8 +66,7 @@ class _PageFlipImageState extends State<PageFlipImage> {
   }
 
   void _resolveImage() {
-    final ImageStream newStream =
-        widget.image!.resolve(createLocalImageConfiguration(context));
+    final ImageStream newStream = widget.image!.resolve(createLocalImageConfiguration(context));
     _updateSourceStream(newStream);
   }
 
@@ -105,6 +106,7 @@ class _PageFlipImageState extends State<PageFlipImage> {
           amount: widget.amount,
           image: _imageInfo!.image,
           backgroundColor: widget.backgroundColor,
+          shadowColor: widget.shadowColor,
           isRightSwipe: widget.isRightSwipe,
         ),
         size: Size.infinite,
