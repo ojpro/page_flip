@@ -36,15 +36,16 @@ class PageFlipBuilderState extends State<PageFlipBuilder> {
   final _boundaryKey = GlobalKey();
 
   void _captureImage(Duration timeStamp, int index) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-    if (_boundaryKey.currentContext == null) return;
-    if (mounted) {
-      final boundary = _boundaryKey.currentContext!.findRenderObject()
-          as RenderRepaintBoundary;
-      final image = await boundary.toImage();
-      setState(() {
-        imageData[index] = image.clone();
-      });
+    // await Future.delayed(const Duration(milliseconds: 100));
+    if (_boundaryKey.currentContext != null) {
+      if (mounted) {
+        final boundary = _boundaryKey.currentContext!.findRenderObject()
+            as RenderRepaintBoundary;
+        final image = await boundary.toImage();
+        setState(() {
+          imageData[index] = image.clone();
+        });
+      }
     }
   }
 
