@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import '../page_flip.dart';
 
 class PageFlipWidget extends StatefulWidget {
@@ -102,15 +104,6 @@ class PageFlipWidgetState extends State<PageFlipWidget>
       pageNumber = widget.initialIndex;
       lastPageLoad = pages.length < 3 ? 0 : 3;
     }
-    // Ensure proper initialization for any initial index
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        currentPageIndex.value = pageNumber;
-        currentWidget.value = pages[pageNumber];
-        // Pre-capture images for better quality
-        _preloadImages();
-      }
-    });
   }
 
   bool get _isLastPage => (pages.length - 1) == pageNumber;
@@ -118,19 +111,23 @@ class PageFlipWidgetState extends State<PageFlipWidget>
   bool get _isFirstPage => pageNumber == 0;
 
   void _preloadImages() {
-    final pagesToPreload = [
-      pageNumber,
+    List<int> pagesToPreload = [
       if (pageNumber > 0) pageNumber - 1,
+      pageNumber,
       if (pageNumber < pages.length - 1) pageNumber + 1,
+    ];
+
+    // remove duplication
+    pagesToPreload = [
+      ...{...pagesToPreload}
     ];
 
     for (final pageIndex in pagesToPreload) {
       if (pageIndex >= 0 && pageIndex < pages.length) {
         // Just trigger a brief capture for preloading
-        Future.delayed(
-            Duration(milliseconds: pageIndex == pageNumber ? 0 : 100), () {
+        Future.delayed(const Duration(milliseconds: 100), () {
           if (mounted) {
-            currentPage.value = pageIndex;
+            currentPage.value = pageIndex - 1;
             Future.delayed(const Duration(milliseconds: 50), () {
               if (mounted) {
                 currentPage.value = -1;
@@ -211,9 +208,7 @@ class PageFlipWidgetState extends State<PageFlipWidget>
     currentPage.value = pageNumber;
     await _controllers[pageNumber].reverse();
     if (mounted) {
-      setState(() {
-        pageNumber++;
-      });
+      pageNumber++;
       if (pageNumber < pages.length) {
         currentPageIndex.value = pageNumber;
         currentWidget.value = pages[pageNumber];
