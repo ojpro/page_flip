@@ -98,12 +98,13 @@ class PageFlipWidgetState extends State<PageFlipWidget>
       pages.add(child);
     }
     pages = pages.reversed.toList();
-    if (isRefresh) {
-      goToPage(pageNumber);
-    } else {
+
+    if (!isRefresh) {
       pageNumber = widget.initialIndex;
       lastPageLoad = pages.length < 3 ? 0 : 3;
     }
+
+    goToPage(pageNumber);
   }
 
   bool get _isLastPage => (pages.length - 1) == pageNumber;
