@@ -19,6 +19,7 @@ class PageFlipWidget extends StatefulWidget {
     this.isRightSwipe = false,
     this.onPageFlipped,
     this.onFlipStart,
+    this.onTap,
     this.controller,
   })  : assert(initialIndex < children.length,
             'initialIndex cannot be greater than children length'),
@@ -35,6 +36,7 @@ class PageFlipWidget extends StatefulWidget {
   final bool isRightSwipe;
   final void Function(int pageNumber)? onPageFlipped;
   final void Function()? onFlipStart;
+  final void Function(TapDownDetails details)? onTap;
 
   @override
   PageFlipWidgetState createState() => PageFlipWidgetState();
@@ -277,7 +279,11 @@ class PageFlipWidgetState extends State<PageFlipWidget>
     return LayoutBuilder(
       builder: (context, dimens) => GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTapDown: (details) {},
+        onTapDown: (details) {
+          if (widget.onTap != null) {
+            widget.onTap!(details);
+          }
+        },
         onTapUp: (details) {},
         onPanDown: (details) {},
         onPanEnd: (details) {},

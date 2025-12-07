@@ -28,3 +28,6 @@
 
 ## 0.2.5+1
 * updated readme file
+
+## 0.1.10
+* add `onTap` event method
