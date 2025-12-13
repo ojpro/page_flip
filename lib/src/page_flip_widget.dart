@@ -20,6 +20,8 @@ class PageFlipWidget extends StatefulWidget {
     this.onPageFlipped,
     this.onFlipStart,
     this.onTap,
+    this.onDoubleTap,
+    this.onLongPress,
     this.controller,
   })  : assert(initialIndex < children.length,
             'initialIndex cannot be greater than children length'),
@@ -37,6 +39,8 @@ class PageFlipWidget extends StatefulWidget {
   final void Function(int pageNumber)? onPageFlipped;
   final void Function()? onFlipStart;
   final void Function(TapDownDetails details)? onTap;
+  final void Function()? onDoubleTap;
+  final void Function()? onLongPress;
 
   @override
   PageFlipWidgetState createState() => PageFlipWidgetState();
@@ -286,6 +290,16 @@ class PageFlipWidgetState extends State<PageFlipWidget>
         },
         onTapUp: (details) {},
         onPanDown: (details) {},
+        onDoubleTap: () {
+          if (widget.onDoubleTap != null) {
+            widget.onDoubleTap!();
+          }
+        },
+        onLongPress: () {
+          if (widget.onLongPress != null) {
+            widget.onLongPress!();
+          }
+        },
         onPanEnd: (details) {},
         onTapCancel: () {},
         onHorizontalDragCancel: () => _isForward = null,

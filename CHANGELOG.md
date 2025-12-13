@@ -31,3 +31,6 @@
 
 ## 0.1.10
 * add `onTap` event method
+
+## 0.1.11
+* add `onDoubleTap` and `onLongPress` events
